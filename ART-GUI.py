@@ -38,4 +38,5 @@ class Sim_board():
                     Flag = False
 
 run1=Sim_board(200,0.2)
+print(run1.height)
 run1.rungame()
