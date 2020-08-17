@@ -17,27 +17,23 @@ class Sim_board():
 
 
     def rungame(self):
-        # initialize pygame variable and obj
         pygame.display.set_caption(self.caption)
         self.canvas.fill(self.background_colour)
         self.p1_camera = pygame.Rect(0, 0, self.width/2, self.height/2)
         self.p2_camera = pygame.Rect(self.width/2, 0, self.width/2, self.height/2)
-        #self.score_camera=pygame.Rect(0,self.height/2,0,self.height)
-        self.p3_camera = pygame.Rect(0, self.height/2, self.width/2, self.height/2)
-        self.p4_camera = pygame.Rect(self.width/2, self.height/2, self.width/2, self.height/2)
+        p3_camera = pygame.Rect(0, self.height/2, self.width/2, self.height/2)
+        p4_camera = pygame.Rect(self.width/2, self.height/2, self.width/2, self.height/2)
         self.sub1 = self.canvas.subsurface(self.p1_camera)
         self.sub2 = self.canvas.subsurface(self.p2_camera)
-        self.sub3 = self.canvas.subsurface(self.p3_camera)
-        self.sub4 = self.canvas.subsurface(self.p4_camera)
-
+        sub3 = self.canvas.subsurface(p3_camera)
+        sub4 = self.canvas.subsurface(p4_camera)
+        pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height/2), 10)
+        pygame.draw.line(sub3, (0, 0, 0), (0, 0), (self.width/2, 0), 10)
+        pygame.draw.line(sub4, (0, 0, 0), (0, 0), (self.width/2, 0), 10)
         self.screen.blit(self.sub1, (0, 0))
         self.screen.blit(self.sub2, (self.width/2, 0))
-        self.screen.blit(self.sub3, (0, self.height/2))
-        self.screen.blit(self.sub4, (self.width/2, self.height/2))
-
-        #pygame font
-        pygame.font.init()
-        My_font = pygame.font.SysFont("Comic Sans MS", 30)
+        self.screen.blit(sub3, (0, self.height/2))
+        self.screen.blit(sub4, (self.width/2, self.height/2))
 
         # user input variables
         trial_amount = 100
@@ -51,18 +47,10 @@ class Sim_board():
 
         # main loop
         while trial_amount > current_trial:
-            pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
-            pygame.draw.line(self.sub3, (0, 0, 0), (0, 0), (self.width / 2, 0), 10)
-            pygame.draw.line(self.sub4, (0, 0, 0), (0, 0), (self.width / 2, 0), 10)
-            pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
-            pygame.draw.line(self.sub2, (0, 0, 0), (self.width / 2, 0), (self.width, self.height / 2), 10)
-
             current_trial += 1
-            Trial_count = My_font.render("Trial Count:"+str(current_trial), False, (0, 0, 0))
-            self.screen.blit(self.sub3, (0, self.height / 2))
-            self.screen.blit(Trial_count, (50, 600))
-            self.sub3.fill((255,255,255))
+
             print("Trial " + str(current_trial))
+
             result = self.trial(failure_percentage)
 
             if (result[0] > result[1]):
@@ -190,6 +178,8 @@ class Sim_board():
                             potential_candidate = i
 
                     ART_point = potential_candidate
+
+
         return [RT_steps, ART_steps]
 
 
