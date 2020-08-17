@@ -114,7 +114,7 @@ class Sim_board():
         ART_steps = 0
         prev_points = []
         ART_failure_rect = pygame.draw.rect(self.sub2, [255, 0, 0], [failure_coor[0], failure_coor[1], failure_size, failure_size], 0)
-        self.screen.blit(self.sub2, (self.width/2, 0))
+        self.screen.blit(self.sub2, (0, 0))
         pygame.display.update()
 
         while RT_flag or ART_flag:
@@ -136,7 +136,6 @@ class Sim_board():
                     RT_flag = False
                     RT_steps = steps
                     self.sub1.fill(self.background_colour)
-
                     self.screen.blit(self.sub1, (0, 0))
 
                 else:
@@ -161,7 +160,6 @@ class Sim_board():
                     ART_flag = False
                     ART_steps = steps
                     self.sub2.fill(self.background_colour)
-                    pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
                     self.screen.blit(self.sub2, (self.width / 2, 0))
 
                 else:
