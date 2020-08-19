@@ -37,7 +37,7 @@ class Sim_board():
 
         # user input variables
         trial_amount = 100
-        failure_percentage = 0.5
+        failure_percentage = 0.25
 
         # initial variables
         current_trial = 0
@@ -66,33 +66,33 @@ class Sim_board():
 
         print("Tie: " + str(tie_score))
 
-        Flag = True
-        while Flag:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    Flag = False
+        # Flag = True
+        # while Flag:
+        #     for event in pygame.event.get():
+        #         if event.type == pygame.QUIT:
+        #             Flag = False
 
     def euclidean_distance(self, coor1, coor2):
         return math.sqrt((coor1[0] - coor2[0]) ** 2 + (coor1[1] - coor2[1]) ** 2)
 
-    def generate_coordinate(self):
-        return [random.randint(1, self.screen_size[0]), random.randint(1, self.screen_size[1])]
-
-    def failure_generate_coordinate(self, xlim, ylim):
-        return [random.randint(1, xlim), random.randint(1, ylim)]
+    def generate_coordinate(self, xlim, ylim):
+        return [random.randint(0, xlim), random.randint(0, ylim)]
 
     def trial(self, failure_percentage):
         steps = 0
 
-        # generate first point
-        first_point = self.generate_coordinate()
-        xlim = self.screen_size[0] - (self.screen_size[0] * failure_percentage)
-        ylim = self.screen_size[1] - (self.screen_size[1] * failure_percentage)
-        failure_coor = self.failure_generate_coordinate(xlim, ylim)
+        # generate failure size
         total_screen_size = self.screen_size[0] * self.screen_size[1]
         total_failure_size = total_screen_size * failure_percentage
         failure_size = math.sqrt(total_failure_size)
         print("failure_size: ", failure_size)
+        failure_size = round(math.sqrt(total_failure_size))
+
+
+        # generate first point
+        first_point = self.generate_coordinate(self.screen_size[0], self.screen_size[1])
+        failure_coor = self.generate_coordinate(self.screen_size[0]-failure_size, self.screen_size[1]-failure_size)
+        
         # initializing RT variables
         RT_point = first_point
         RT_flag = True
@@ -118,7 +118,7 @@ class Sim_board():
             # RT part
             if (RT_flag):
                 print("RT:" + str(RT_point))
-                RT_rect = pygame.draw.rect(self.sub1, [0, 255, 0], [RT_point[0], RT_point[1], 10, 10], 0)
+                RT_rect = pygame.draw.rect(self.sub1, [100, 255, 100], [RT_point[0], RT_point[1], 2, 2], 0)
                 self.screen.blit(self.sub1, (0, 0))
                 pygame.display.update()
 
@@ -136,14 +136,14 @@ class Sim_board():
 
                 else:
                     # generate next point
-                    RT_point = self.generate_coordinate()
+                    RT_point = self.generate_coordinate(self.screen_size[0], self.screen_size[1])
 
 
 
             # ART part
             if (ART_flag):
                 print("ART:" + str(ART_point))
-                ART_rect = pygame.draw.rect(self.sub2, [0, 0, 255], [ART_point[0], ART_point[1], 10, 10], 0)
+                ART_rect = pygame.draw.rect(self.sub2, [0, 0, 255], [ART_point[0], ART_point[1], 2, 2], 0)
                 self.screen.blit(self.sub2, (self.width / 2, 0))
                 pygame.display.update()
 
@@ -162,7 +162,10 @@ class Sim_board():
                 else:
                     # find new candidate by generating 3 candidates
                     prev_points.append(ART_point)
-                    candidates = [self.generate_coordinate(), self.generate_coordinate(), self.generate_coordinate()]
+                    candidates = []
+                    for i in range(0,3):
+
+                        candidates.append(self.generate_coordinate(self.screen_size[0], self.screen_size[1]))
 
                     # initialize variables
                     potential_candidate = []
