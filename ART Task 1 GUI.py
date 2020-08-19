@@ -37,7 +37,7 @@ class Sim_board():
 
         # user input variables
         trial_amount = 100
-        failure_percentage = 0.01
+        failure_percentage = 0.5
 
         # initial variables
         current_trial = 0
@@ -78,22 +78,32 @@ class Sim_board():
     def generate_coordinate(self):
         return [random.randint(1, self.screen_size[0]), random.randint(1, self.screen_size[1])]
 
+    def failure_generate_coordinate(self, xlim, ylim):
+        return [random.randint(1, xlim), random.randint(1, ylim)]
+
     def trial(self, failure_percentage):
         steps = 0
 
         # generate first point
         first_point = self.generate_coordinate()
-        failure_coor = self.generate_coordinate()
+        xlim = self.screen_size[0] - (self.screen_size[0] * failure_percentage)
+        ylim = self.screen_size[1] - (self.screen_size[1] * failure_percentage)
+        failure_coor = self.failure_generate_coordinate(xlim, ylim)
         total_screen_size = self.screen_size[0] * self.screen_size[1]
         total_failure_size = total_screen_size * failure_percentage
         failure_size = math.sqrt(total_failure_size)
-
+        print("failure_size: ", failure_size)
         # initializing RT variables
         RT_point = first_point
         RT_flag = True
         RT_steps = 0
+
         RT_failure_rect = pygame.draw.rect(self.sub1, [255, 0, 0], [failure_coor[0], failure_coor[1], failure_size, failure_size], 0)
+        ART_failure_rect = pygame.draw.rect(self.sub2, [255, 0, 0], [failure_coor[0], failure_coor[1], failure_size, failure_size], 0)
+        print("Width :", RT_failure_rect.width)
+
         self.screen.blit(self.sub1, (0, 0))
+        self.screen.blit(self.sub2, (self.width/2, 0))
         pygame.display.update()
 
         # initializing ART variables
@@ -101,9 +111,6 @@ class Sim_board():
         ART_flag = True
         ART_steps = 0
         prev_points = []
-        ART_failure_rect = pygame.draw.rect(self.sub2, [255, 0, 0], [failure_coor[0], failure_coor[1], failure_size, failure_size], 0)
-        self.screen.blit(self.sub2, (self.width/2, 0))
-        pygame.display.update()
 
         while RT_flag or ART_flag:
             steps += 1
