@@ -23,10 +23,12 @@ class Sim_board():
         self.p2_camera = pygame.Rect(self.width/2, 0, self.width/2, self.height/2)
         p3_camera = pygame.Rect(0, self.height/2, self.width/2, self.height/2)
         p4_camera = pygame.Rect(self.width/2, self.height/2, self.width/2, self.height/2)
+        self.p5_camera = pygame.Rect(0, self.height/2+40, self.width, self.height/2-40)
         self.sub1 = self.canvas.subsurface(self.p1_camera)
         self.sub2 = self.canvas.subsurface(self.p2_camera)
         sub3 = self.canvas.subsurface(p3_camera)
         sub4 = self.canvas.subsurface(p4_camera)
+        self.sub5 = self.canvas.subsurface(self.p5_camera)
         pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height/2), 10)
         pygame.draw.line(sub3, (0, 0, 0), (0, 0), (self.width/2, 0), 10)
         pygame.draw.line(sub4, (0, 0, 0), (0, 0), (self.width/2, 0), 10)
@@ -34,6 +36,13 @@ class Sim_board():
         self.screen.blit(self.sub2, (self.width/2, 0))
         self.screen.blit(sub3, (0, self.height/2))
         self.screen.blit(sub4, (self.width/2, self.height/2))
+        self.screen.blit(self.sub5, (0 , self.height/2+40))
+
+        fpsClock = pygame.time.Clock()
+
+        #Pygame font initialization
+        pygame.font.init()
+        My_font = pygame.font.SysFont("Comic Sans MS", 20)
 
         # user input variables
         trial_amount = 100
@@ -47,10 +56,20 @@ class Sim_board():
 
         # main loop
         while trial_amount > current_trial:
+            fpsClock.tick(1)
+
             current_trial += 1
-
+            Trial_count = My_font.render("Trial Count:" + str(current_trial), False, (0, 0, 0))
+            RT_score_count=My_font.render("RT_score:" + str(rt_score), False, (0, 0, 0))
+            ART_score_count = My_font.render("ART_score:" + str(art_score), False, (0, 0, 0))
+            tie_score_count= My_font.render("Tie_score:"+str(tie_score),False,(0,0,0))
             print("Trial " + str(current_trial))
-
+            self.screen.blit(self.sub5, (0, self.height / 2+20))
+            self.screen.blit(Trial_count, (50, int(self.height/2+100)))
+            self.screen.blit(RT_score_count, (int(self.width/4-self.width/10), int(self.height/2+30)))
+            self.screen.blit(ART_score_count, (int(self.width*3/4-self.width/10), int(self.height/2+30)))
+            self.screen.blit(tie_score_count, (int(self.width/2-self.width/10), int(self.height/2+80)))
+            self.sub5.fill((255,255,255))
             result = self.trial(failure_percentage)
 
             if (result[0] > result[1]):
@@ -66,6 +85,9 @@ class Sim_board():
 
         print("Tie: " + str(tie_score))
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
         # Flag = True
         # while Flag:
         #     for event in pygame.event.get():
