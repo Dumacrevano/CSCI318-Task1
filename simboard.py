@@ -56,7 +56,7 @@ class Sim_board():
 
         # main loop
         while trial_amount > current_trial:
-            fpsClock.tick(10)
+            fpsClock.tick(1)
 
             current_trial += 1
             Trial_count = My_font.render("Trial Count:" + str(current_trial), False, (0, 0, 0))
@@ -133,9 +133,12 @@ class Sim_board():
         ART_flag = True
         ART_steps = 0
         prev_points = []
+        RT_fill_flag = False
+        ART_fill_flag = False
 
         while RT_flag or ART_flag:
             steps += 1
+
 
             # RT part
             if (RT_flag):
@@ -152,8 +155,8 @@ class Sim_board():
                 if RT_rect.colliderect(RT_failure_rect):
                     RT_flag = False
                     RT_steps = steps
-                    self.sub1.fill(self.background_colour)
-
+                    #self.sub1.fill(self.background_colour)
+                    RT_fill_flag=True
                     self.screen.blit(self.sub1, (0, 0))
 
                 else:
@@ -177,7 +180,8 @@ class Sim_board():
                 if ART_rect.colliderect(ART_failure_rect):
                     ART_flag = False
                     ART_steps = steps
-                    self.sub2.fill(self.background_colour)
+                    #self.sub2.fill(self.background_colour)
+                    ART_fill_flag=True
                     pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
                     self.screen.blit(self.sub2, (self.width / 2, 0))
 
@@ -210,8 +214,11 @@ class Sim_board():
                             potential_candidate = i
 
                     ART_point = potential_candidate
-
-
+            if ART_fill_flag and RT_fill_flag:
+                self.sub1.fill(self.background_colour)
+                self.sub2.fill(self.background_colour)
+                ART_fill_flag=False
+                RT_fill_flag=False
         return [RT_steps, ART_steps]
 
 
