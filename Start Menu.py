@@ -119,7 +119,7 @@ def run():
                     txt_box_data=[]
                     for input_box in input_boxes:
                         txt_box_data.append(input_box.text)#get data from input boxes
-                        print(input_box.text)
+
                     flag=False
                     run1=simboard.Sim_board(int(txt_box_data[0]),int(txt_box_data[1]),int(txt_box_data[2]),float(txt_box_data[3]))#pass data to the simulation board
                     run1.rungame()

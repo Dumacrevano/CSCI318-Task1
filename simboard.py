@@ -120,7 +120,7 @@ class Sim_board():
                         candidates.append(self.generate_coordinate(self.screen_size[0], self.screen_size[1]))
                     """RT ALGORITHM START HERE"""
                     if (RT_flag):
-                        print("RT:" + str(RT_point))
+
                         RT_rect = pygame.draw.rect(self.sub1, [100, 255, 100], [RT_point[0], RT_point[1], 5, 5], 0)
                         self.screen.blit(self.sub1, (0, 0))
                         pygame.display.update()
@@ -136,13 +136,13 @@ class Sim_board():
                             # self.sub1.fill(self.background_colour)
                             RT_fill_flag = True
                             self.screen.blit(self.sub1, (0, 0))
-
+                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " RT - HIT!")
                         else:
                             # generate next point
                             RT_point = candidates[0]
-
+                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " RT - Missed!")
                     if (ART_flag):
-                        print("ART:" + str(ART_point))
+
                         ART_rect = pygame.draw.rect(self.sub2, [0, 0, 255], [ART_point[0], ART_point[1], 5, 5], 0)
                         self.screen.blit(self.sub2, (self.width / 2, 0))
                         pygame.display.update()
@@ -159,10 +159,11 @@ class Sim_board():
                             ART_fill_flag = True
                             pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
                             self.screen.blit(self.sub2, (self.width / 2, 0))
-
+                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " ART - HIT!")
                         else:
                             # find new candidate by generating 3 candidates
                             prev_points.append(ART_point)
+                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " ART - Missed!")
 
 
                             # initialize variables
@@ -188,7 +189,7 @@ class Sim_board():
                             ART_point = potential_candidate
 
 
-                if ART_fill_flag and RT_fill_flag:#Check if Status is completed
+                if ART_fill_flag or RT_fill_flag:#Check if Status is completed
                     current_trial += 1
                     """generate new points"""
                     first_point = self.generate_coordinate(self.screen_size[0], self.screen_size[1])
@@ -196,40 +197,35 @@ class Sim_board():
                                                             self.screen_size[1] - failure_size)
                     ART_point = first_point
                     RT_point = first_point
+                    steps=0
 
-                    """update needed flag"""
+                    """condition for score counter"""
+                    if ART_fill_flag and RT_fill_flag:
+                        tie_score += 1
+                    elif ART_fill_flag:
+                        art_score += 1
+                    elif RT_fill_flag:
+                        rt_score += 1
+
+                    """Reset flag"""
                     ART_fill_flag = False
                     RT_fill_flag = False
                     RT_flag = True
                     ART_flag = True
 
-                    """condition for score counter"""
-                    if ART_steps < RT_steps:
-                        art_score += 1
-                    elif ART_steps > RT_steps:
-                        rt_score += 1
-                    else:
-                        tie_score += 1
+
 
                     self.sub1.fill(self.background_colour)
                     self.sub2.fill(self.background_colour)
                     pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
 
-                print("failurebox width:", RT_failure_rect.width)
-                print("Trial " + str(current_trial))
+
             pygame.display.flip()
 
             """Event handler of the main panel"""
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-
-
-
-        """Print Status"""
-        print("ART: " + str(art_score))
-        print("RT: " + str(rt_score))
-        print("Tie: " + str(tie_score))
 
 
 
