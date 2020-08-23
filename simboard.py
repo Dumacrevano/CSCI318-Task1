@@ -85,7 +85,7 @@ class Sim_board():
 
         """Main loop of the panel"""
         while main_flag:
-            #fpsClock.tick(100)
+            fpsClock.tick(2)
 
 
             Trial_count = My_font.render("Trial Count:" + str(current_trial), False, (0, 0, 0))
@@ -194,7 +194,8 @@ class Sim_board():
                     first_point = self.generate_coordinate(self.screen_size[0], self.screen_size[1])
                     failure_coor = self.generate_coordinate(self.screen_size[0] - failure_size,
                                                             self.screen_size[1] - failure_size)
-
+                    ART_point = first_point
+                    RT_point = first_point
 
                     """update needed flag"""
                     ART_fill_flag = False
@@ -246,6 +247,4 @@ class Sim_board():
         failure_size = round(math.sqrt(total_failure_size))
         print("failure_size: ", failure_size)
         return failure_size
-
-
 
