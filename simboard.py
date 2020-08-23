@@ -85,7 +85,7 @@ class Sim_board():
 
         """Main loop of the panel"""
         while main_flag:
-            fpsClock.tick(2)
+            fpsClock.tick(100)
 
 
             Trial_count = My_font.render("Trial Count:" + str(current_trial), False, (0, 0, 0))
@@ -115,7 +115,9 @@ class Sim_board():
                 """ALGORITHM START HERE IF rt_flag and ART_FLAG represent WHILE"""
                 if RT_flag or ART_flag:
                     steps+=1
-
+                    candidates = []
+                    for i in range(0, 3):
+                        candidates.append(self.generate_coordinate(self.screen_size[0], self.screen_size[1]))
                     """RT ALGORITHM START HERE"""
                     if (RT_flag):
                         print("RT:" + str(RT_point))
@@ -137,7 +139,7 @@ class Sim_board():
 
                         else:
                             # generate next point
-                            RT_point = self.generate_coordinate(self.screen_size[0], self.screen_size[1])
+                            RT_point = candidates[0]
 
                     if (ART_flag):
                         print("ART:" + str(ART_point))
@@ -161,9 +163,7 @@ class Sim_board():
                         else:
                             # find new candidate by generating 3 candidates
                             prev_points.append(ART_point)
-                            candidates = []
-                            for i in range(0, 3):
-                                candidates.append(self.generate_coordinate(self.screen_size[0], self.screen_size[1]))
+
 
                             # initialize variables
                             potential_candidate = []
