@@ -17,7 +17,6 @@ def drawCircle(t,x,y):
 def drawRectangle(t,x,y,l,b):
     """drawRectangle function draw the rectangle of length = l and width = b on
     location (x,y) """
-
     t.penup()
     t.setx(x)
     t.sety(y)
@@ -36,11 +35,11 @@ def drawRectangle(t,x,y,l,b):
             # Turn turtle by 90 degree
             t.left(90)
 
-def Intialization(t,length,width):
+def Intialization(t,length,width,blockRegion,blockSize):
     """Intialization function draw two rectangle and initialize the block for
     RT and ART algorithm"""
 
-    #selecting pencolor and penSize
+    t.speed(10)
     t.pencolor("black") # Red
     t.pensize(4)
 
@@ -64,24 +63,13 @@ def Intialization(t,length,width):
     t.write("ART",font=("Arial",22,"normal"))
     drawRectangle(t,x2,y2,length,width)
 
-    #generating random location for block of size 10 (square)
-    blockSize = 40
-    while True:
-        point = (randint(1,length-1),randint(1,width-1))
-        if point[0] + blockSize < length  and point[1] +blockSize < width:
-            break
+    point = blockRegion[0]
 
     #drawing on the RT algorithm Rectangle
     drawRectangle(t,x1+point[0],y1+point[1],blockSize,blockSize)
 
     #drawing on the ART algorithm Rectangle
     drawRectangle(t,x2+point[0],y2+point[1],blockSize,blockSize)
-
-    #computing the block region for test cases testing
-    blockRegion = [ point, (point[0]+blockSize,point[1]+blockSize)]
-
-    #returning the block region
-    return blockRegion
 
 def calculate_distance(p1,p2):
     """calculate_distance function compute distance between two points"""
@@ -151,10 +139,12 @@ def checkSuccess(point,blockRegion):
     if point[0] >= blockRegion[0][0] and point[0] <= blockRegion[1][0] and point[1] >= blockRegion[0][1] and point[1] <= blockRegion[1][1] :
         return True
 
-def demo(t,length,width,blockRegion):
+def demo(t,length,width,blockRegion,blockSize):
     """demo function takes run both the algorithms  first time and compute
     each test case and in last computes the success in number of times
     iterations """
+
+    Intialization(t,length,width,blockRegion,blockSize)
 
     #initializing the list for ART and RT
     A = []
@@ -169,22 +159,12 @@ def demo(t,length,width,blockRegion):
     drawCircle(t,point[0],point[1])
     drawCircle(t,point[0]+length+ 80,point[1])
 
-    while True:
-        failureRate = input("Enter a failure rate : ")
-        try:
-            failureRate = float(failureRate)
-            if failureRate > 0.0 and failureRate < 1.0 :
-                break
-            else:
-                raise ValueError()
-        except ValueError:
-            print("Please enter a value greater than 0 and less than 1.")
 
     #check if first points lies in the region
     if checkSuccess(point,blockRegion) == True:
-        print("Test case : {}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
+        print("Test case : {:3d}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
     else:
-        print("Test case : {}  RT - missed; ART - missed" .format(len(A)))
+        print("Test case : {:3d}  RT - missed; ART - missed" .format(len(A)))
         #run RT and ART until one gets success
         while True:
 
@@ -195,16 +175,16 @@ def demo(t,length,width,blockRegion):
             drawCircle(t,artPoint[0]+length+ 80,artPoint[1])
 
             if checkSuccess(artPoint,blockRegion) == True and checkSuccess(rtPoint,blockRegion) == True:
-                print("Test case : {}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
+                print("Test case : {:3d}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
                 break
             elif checkSuccess(artPoint,blockRegion) == True:
-                print("Test case : {}  RT - missed; ART - Hit!!!" .format(len(A)))
+                print("Test case : {:3d}  RT - missed; ART - Hit!!!" .format(len(A)))
                 break
             elif checkSuccess(rtPoint,blockRegion) == True:
-                print("Test case : {}  RT - Hit!!! ART - missed" .format(len(A)))
+                print("Test case : {:3d}  RT - Hit!!! ART - missed" .format(len(A)))
                 break
             else:
-                print("Test case : {}  RT - missed; ART - missed" .format(len(A)))
+                print("Test case : {:3d}  RT - missed; ART - missed" .format(len(A)))
 
 
     while True:
@@ -217,45 +197,85 @@ def demo(t,length,width,blockRegion):
 
     artWinCount = 0;
     rtWinCount = 0
-    # t.reset()
-    # blockRegion = Intialization(t,length,width)
+
     for i in range(number):
+        t.reset()
+        Intialization(t,length,width,blockRegion,blockSize)
+
+        #initializing the list for ART and RT
         A = []
         R = []
+
+        #selecting the random first random point
         point = (randint(1,length-1),randint(1,width-1))
         A.append(point)
         R.append(point)
-        #drawCircle(t,point[0],point[1])
-        #drawCircle(t,point[0]+length+ 80,point[1])
 
+        #drawing the point the turtle screen
+        drawCircle(t,point[0],point[1])
+        drawCircle(t,point[0]+length+ 80,point[1])
+
+        print("Iteration  : {:2d}" .format(i))
         #check if first points lies in the region
         if checkSuccess(point,blockRegion) == True:
-            print("Test Case : {} ; First random point is in block Region : " .format(len(A)))
-            artWinCount += 1
-            rtWinCount += 1
-            break;
+            print("\tTest case : {:3d}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
         else:
+            print("\tTest case : {:3d}  RT - missed; ART - missed" .format(len(A)))
+            #run RT and ART until one gets success
             while True:
+
                 rtPoint = RT(R,length,width)
-                #drawCircle(t,rtPoint[0],rtPoint[1])
+                drawCircle(t,rtPoint[0],rtPoint[1])
 
                 artPoint = ART(A,length,width)
-                #drawCircle(t,artPoint[0]+length+ 80,artPoint[1])
+                drawCircle(t,artPoint[0]+length+ 80,artPoint[1])
+
                 if checkSuccess(artPoint,blockRegion) == True and checkSuccess(rtPoint,blockRegion) == True:
+                    print("\tTest case : {:3d}  RT - Hit!!! ART - Hit!!!" .format(len(A)))
                     artWinCount += 1
                     rtWinCount += 1
                     break
                 elif checkSuccess(artPoint,blockRegion) == True:
+                    print("\tTest case : {:3d}  RT - missed; ART - Hit!!!" .format(len(A)))
                     artWinCount += 1
                     break
                 elif checkSuccess(rtPoint,blockRegion) == True:
+                    print("\tTest case : {:3d}  RT - Hit!!! ART - missed" .format(len(A)))
                     rtWinCount += 1
                     break
-    print("{} competitions have been completed, of which RT wins {} times and ART wins {} times" .format(number,rtWinCount,artWinCount))
+                else:
+                    print("\tTest case : {:3d}  RT - missed; ART - missed" .format(len(A)))
+
+    print("\n\n{} competitions have been completed, of which RT wins {} times and ART wins {} times" .format(number,rtWinCount,artWinCount))
 
 if __name__ == "__main__":
 
     """setting up tkinter and turtle screen for drawing and calling demo function """
+
+    #initial Dimension for 2 D plot
+    length = 400
+    width = 200
+
+    while True:
+        failureRate = input("Enter a failure rate : ")
+        try:
+            failureRate = float(failureRate)
+            if failureRate > 0.0 and failureRate < 1.0 :
+                break
+            else:
+                raise ValueError()
+        except ValueError:
+            print("Please enter a value greater than 0 and less than 1.")
+
+    #generating random location for block of size 50 (square)
+    blockSize = int(50*failureRate)
+    while True:
+        point = (randint(1,length-1),randint(1,width-1))
+        if point[0] + blockSize < length  and point[1] +blockSize < width:
+            break
+
+    #computing the block region for test cases testing
+    blockRegion = [ point, (point[0]+blockSize,point[1]+blockSize)]
 
     root = tk.Tk()
     canvas = tk.Canvas(master = root, width = 800, height = 600)
@@ -265,16 +285,13 @@ if __name__ == "__main__":
     screen = turtle.TurtleScreen(canvas)
     screen.setworldcoordinates(-100, 400,980,-100)
 
-    t = turtle.RawTurtle(screen,visible=False)
+    t = turtle.RawTurtle(screen,visible=True)
+    t.speed(10)
+    t.pencolor("black") # Red
+    t.pensize(4)
 
-    #initial Dimension for 2 D plot
-    length = 400
-    width = 200
-
-    # block region for failure
-    blockRegion = Intialization(t,length,width)
 
     #calling demo function
-    demo(t,length,width,blockRegion)
+    demo(t,length,width,blockRegion,blockSize)
 
     root.mainloop()

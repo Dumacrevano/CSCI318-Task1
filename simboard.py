@@ -5,7 +5,7 @@ import sys
 
 
 class Sim_board():
-    def __init__(self, sizex, sizey, number_of_trial, failurerate):
+    def __init__(self, sizex, sizey, number_of_trial, failurerate, number_of_candidate):
         """Class variable for the GUI"""
         self.failure_rate = failurerate
         self.height = sizex * 2
@@ -16,6 +16,8 @@ class Sim_board():
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.canvas = pygame.Surface((self.width, self.height))
         self.number_of_trial = number_of_trial
+        self.number_of_candidate = number_of_candidate
+        self.speed=60
         """class variable for algorithm"""
 
     def rungame(self):
@@ -116,7 +118,7 @@ class Sim_board():
                 if RT_flag or ART_flag:
                     steps+=1
                     candidates = []
-                    for i in range(0, 3):
+                    for i in range(0, self.number_of_candidate):
                         candidates.append(self.generate_coordinate(self.screen_size[0], self.screen_size[1]))
                     """RT ALGORITHM START HERE"""
                     if (RT_flag):
@@ -136,11 +138,11 @@ class Sim_board():
                             # self.sub1.fill(self.background_colour)
                             RT_fill_flag = True
                             self.screen.blit(self.sub1, (0, 0))
-                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " RT - HIT!")
+                            RT_msg = " RT - HIT"
                         else:
                             # generate next point
                             RT_point = candidates[0]
-                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " RT - Missed!")
+                            RT_msg = " RT - Missed"
                     if (ART_flag):
 
                         ART_rect = pygame.draw.rect(self.sub2, [0, 0, 255], [ART_point[0], ART_point[1], 5, 5], 0)
@@ -159,11 +161,11 @@ class Sim_board():
                             ART_fill_flag = True
                             pygame.draw.line(self.sub2, (0, 0, 0), (0, 0), (0, self.height / 2), 10)
                             self.screen.blit(self.sub2, (self.width / 2, 0))
-                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " ART - HIT!")
+                            ART_msg = " ART - HIT"
                         else:
                             # find new candidate by generating 3 candidates
                             prev_points.append(ART_point)
-                            print("Iteration: " + str(current_trial) + " Test Case: " + str(steps) + " ART - Missed!")
+                            ART_msg = " ART - Missed"
 
 
                             # initialize variables
@@ -188,7 +190,7 @@ class Sim_board():
 
                             ART_point = potential_candidate
 
-
+                    print("Iteration: " + str(current_trial) + "\tTest Case: " + str(steps) + "\t" + RT_msg + "\t" +ART_msg)
                 if ART_fill_flag or RT_fill_flag:#Check if Status is completed
                     current_trial += 1
                     """generate new points"""
