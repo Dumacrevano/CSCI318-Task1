@@ -4,6 +4,7 @@ import math
 import Class
 import sys
 import start
+import time
 
 pygame.init()
 pygame.font.init()
@@ -27,7 +28,7 @@ class Sim_board():
         self.canvas = pygame.Surface((self.width, self.height))
         self.number_of_trial = number_of_trial
         self.number_of_candidate = number_of_candidate
-        self.speed=60
+        self.speed=30
         """class variable for algorithm"""
 
     def rungame(self):
@@ -187,7 +188,7 @@ class Sim_board():
 
                             # initialize variables
                             potential_candidate = []
-                            # print(candidates)
+                            #print(candidates)
 
                             max_dist = -math.inf
 
@@ -213,7 +214,7 @@ class Sim_board():
                                 # print("max dist: " + str(max_dist))
 
                             ART_point = potential_candidate
-                            # print(potential_candidate)
+                            #print(potential_candidate)
 
 
                             # loop through candidates to find ideal candidate
@@ -279,22 +280,23 @@ class Sim_board():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:  # check if mouse button is clicked
-                    if retry_button.x + retry_button.w > mouse[0] > retry_button.x \
-                            and retry_button.y + retry_button.h > mouse[1] > retry_button.y:
-                        start.run()
-                    if add_speed_button.x + add_speed_button.w > mouse[0] > add_speed_button.x \
-                            and add_speed_button.y + add_speed_button.h > mouse[1] > add_speed_button.y:
-                        self.speed+=1
-                        if self.speed>100:
-                            self.speed=2000
-                    if reduce_speed_button.x + reduce_speed_button.w > mouse[0] > reduce_speed_button.x \
-                            and reduce_speed_button.y + reduce_speed_button.h > mouse[1] > reduce_speed_button.y:
-                        self.speed-=1
-                        if self.speed <=2:
-                            self.speed=2
-                        if self.speed >=2000:
-                            self.speed=100
+            if pygame.mouse.get_pressed()[0]: # check if mouse button is clicked
+                if retry_button.x + retry_button.w > mouse[0] > retry_button.x \
+                        and retry_button.y + retry_button.h > mouse[1] > retry_button.y:
+                    start.run()
+                if add_speed_button.x + add_speed_button.w > mouse[0] > add_speed_button.x \
+                        and add_speed_button.y + add_speed_button.h > mouse[1] > add_speed_button.y:
+                    self.speed+=1
+                    if self.speed>100:
+                        self.speed=2000
+                if reduce_speed_button.x + reduce_speed_button.w > mouse[0] > reduce_speed_button.x \
+                        and reduce_speed_button.y + reduce_speed_button.h > mouse[1] > reduce_speed_button.y:
+                    if self.speed <=2:
+                        self.speed=2
+                    if self.speed >=100:
+                        self.speed=100
+                    self.speed -= 1
+                print(self.speed)
 
 
 

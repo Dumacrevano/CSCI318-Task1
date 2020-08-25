@@ -61,7 +61,7 @@ class Button:
     def __init__(self,light_color,dark_color,x,y,w,h,text):
         self.light_color=light_color
         self.dark_color=dark_color
-        self.text=My_font.render(text,True,(0,0,0))
+        self.text=My_font.render(text,True,(255,255,255))
         self.x=x
         self.y=y
         self.w=w
