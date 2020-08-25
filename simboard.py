@@ -160,6 +160,7 @@ class Sim_board():
                             # generate next point
                             RT_point = candidates[0]
                             RT_msg = " RT - Missed"
+                    """Art Algorithm start here"""
                     if (ART_flag):
 
                         ART_rect = pygame.draw.rect(self.sub2, [0, 0, 255], [ART_point[0], ART_point[1], 5, 5], 0)
@@ -184,12 +185,36 @@ class Sim_board():
                             prev_points.append(ART_point)
                             ART_msg = " ART - Missed"
 
-
                             # initialize variables
                             potential_candidate = []
-                            #print(candidates)
-                            
+                            # print(candidates)
+
                             max_dist = -math.inf
+
+                            # loop through candidates to find ideal candidate
+                            for i in candidates:
+                                min_dist = math.inf
+                                # loop through previous points and compare distance
+                                for j in prev_points:
+
+                                    dist = self.euclidean_distance(i, j)
+                                    # print("candidate: " + str(i))
+                                    # print("dist: " + str(dist))
+
+                                    # compare distance between candidate and previous points
+                                    if dist < min_dist:
+                                        min_dist = dist
+                                    # print("min dist: " + str(min_dist))
+
+                                # compare distance between candidate
+                                if min_dist > max_dist:
+                                    potential_candidate = i
+                                    max_dist = min_dist
+                                # print("max dist: " + str(max_dist))
+
+                            ART_point = potential_candidate
+                            # print(potential_candidate)
+
 
                             # loop through candidates to find ideal candidate
                             for i in candidates:
