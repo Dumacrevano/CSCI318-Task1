@@ -1,7 +1,17 @@
 import pygame
 import random
 import math
+import Class
 import sys
+import start
+
+pygame.init()
+pygame.font.init()
+COLOR_INACTIVE = (125,125,125)
+COLOR_ACTIVE = (0, 0, 0)
+LIGHT_GREEN= (0,255,0)
+GREEN = (0,200,0)
+My_font = pygame.font.SysFont("Comic Sans MS", 20)
 
 
 class Sim_board():
@@ -44,7 +54,10 @@ class Sim_board():
         self.screen.blit(self.sub5, (0, self.height / 2 + 40))
         fpsClock = pygame.time.Clock()
 
-
+        """create buttons"""
+        retry_button = Class.Button(LIGHT_GREEN, GREEN, (3.5/8)*self.width, (6/8*self.height), 80, 40, "Retry")
+        add_speed_button = Class.Button((0, 0, 255), (0, 0, 200),(6/8)*self.width,(5.5/8*self.height),40,40,"+")
+        reduce_speed_button = Class.Button((0, 0, 255), (0, 0, 200), (6 / 8) * self.width, (6.5/8 * self.height), 40, 40,"-")
         """initializing required variables for ART and RT"""
         # Pygame font initialization
         pygame.font.init()
@@ -87,8 +100,8 @@ class Sim_board():
 
         """Main loop of the panel"""
         while main_flag:
-            fpsClock.tick(100)
-
+            fpsClock.tick(self.speed)
+            #print(self.speed)
 
             Trial_count = My_font.render("Trial Count:" + str(current_trial), False, (0, 0, 0))
             RT_score_count = My_font.render("RT_score:" + str(rt_score), False, (0, 0, 0))
@@ -108,7 +121,11 @@ class Sim_board():
             ART_failure_rect = pygame.draw.rect(self.sub2, [255, 0, 0],
                                                 [failure_coor[0], failure_coor[1], failure_size, failure_size], 0)
 
+            mouse = pygame.mouse.get_pos()#get mouse position
 
+            retry_button.draw(self.screen,mouse)
+            add_speed_button.draw(self.screen,mouse)
+            reduce_speed_button.draw(self.screen,mouse)
 
 
             if current_trial < trial_amount:
@@ -170,25 +187,34 @@ class Sim_board():
 
                             # initialize variables
                             potential_candidate = []
-                            min_dist = math.inf
+                            #print(candidates)
+                            
                             max_dist = -math.inf
 
                             # loop through candidates to find ideal candidate
                             for i in candidates:
-
+                                min_dist = math.inf
                                 # loop through previous points and compare distance
                                 for j in prev_points:
+
                                     dist = self.euclidean_distance(i, j)
+                                    #print("candidate: " + str(i))
+                                    #print("dist: " + str(dist))
 
                                     # compare distance between candidate and previous points
                                     if dist < min_dist:
                                         min_dist = dist
+                                    #print("min dist: " + str(min_dist))
 
                                 # compare distance between candidate
                                 if min_dist > max_dist:
                                     potential_candidate = i
+                                    max_dist = min_dist
+                                #print("max dist: " + str(max_dist))
+
 
                             ART_point = potential_candidate
+                            #print(potential_candidate)
 
                     print("Iteration: " + str(current_trial) + "\tTest Case: " + str(steps) + "\t" + RT_msg + "\t" +ART_msg)
                 if ART_fill_flag or RT_fill_flag:#Check if Status is completed
@@ -228,8 +254,22 @@ class Sim_board():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-
-
+                if event.type == pygame.MOUSEBUTTONDOWN:  # check if mouse button is clicked
+                    if retry_button.x + retry_button.w > mouse[0] > retry_button.x \
+                            and retry_button.y + retry_button.h > mouse[1] > retry_button.y:
+                        start.run()
+                    if add_speed_button.x + add_speed_button.w > mouse[0] > add_speed_button.x \
+                            and add_speed_button.y + add_speed_button.h > mouse[1] > add_speed_button.y:
+                        self.speed+=1
+                        if self.speed>100:
+                            self.speed=2000
+                    if reduce_speed_button.x + reduce_speed_button.w > mouse[0] > reduce_speed_button.x \
+                            and reduce_speed_button.y + reduce_speed_button.h > mouse[1] > reduce_speed_button.y:
+                        self.speed-=1
+                        if self.speed <=2:
+                            self.speed=2
+                        if self.speed >=2000:
+                            self.speed=100
 
 
 
