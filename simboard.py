@@ -182,8 +182,9 @@ class Sim_board():
                             self.screen.blit(self.sub2, (self.width / 2, 0))
                             ART_msg = " ART - HIT"
                         else:
-                            # find new candidate by generating 3 candidates
+                            
                             prev_points.append(ART_point)
+                            #print(prev_points)
                             ART_msg = " ART - Missed"
 
                             # initialize variables
@@ -266,6 +267,9 @@ class Sim_board():
                     RT_fill_flag = False
                     RT_flag = True
                     ART_flag = True
+
+                    """ reset prev points array """
+                    prev_points = []
 
 
 
